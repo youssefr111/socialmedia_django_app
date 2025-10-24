@@ -1,37 +1,98 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Home
+    Home - SocialHub
 {% endblock %}
 
 {% block content %}
-    <section id="posts_section">
-    {% for post in posts %}
-        <article class="post">
-            
-            <!-- Post details -->
-            <h2>
-                <a href="{%  url 'posts:page' post.id %}">
-                    {{ post.title }}
-                </a>
-            </h2>
-            <p>{{ post.date }} by {{ post.author }}</p>
-            <p>{{ post.body }}</p>
-            <p id="likes-label">❤ <span style="color: black;">{{ post.total_likes }}</span></p>
+    <div class="page-header">
+        <h1>Welcome to SocialHub</h1>
+        <p class="page-subtitle">Discover amazing content from our community</p>
+    </div>
 
-            <!-- Like/Unlike buttons -->
-            {% if user.is_authenticated %}
-            <form action="{% url 'posts:like-post' post.id %}" method="POST">
-                {% csrf_token %}
-                {% if user in post.likes.all %}
-                    <button type="submit" class="danger-btn">Unlike</button>
+    <section id="posts_section" class="posts-container">
+        {% if posts %}
+            {% for post in posts %}
+                <article class="post" data-post-id="{{ post.id }}">
+                    <div class="post-header">
+                        <div class="post-meta">
+                            <span class="post-author">
+                                <span class="author-avatar">👤</span>
+                                {{ post.author }}
+                            </span>
+                            <span class="post-date">{{ post.date|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="post-actions">
+                            <span class="post-id">#{{ post.id }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="post-content">
+                        <h2 class="post-title">
+                            <a href="{% url 'posts:page' post.id %}">
+                                {{ post.title }}
+                            </a>
+                        </h2>
+                        
+                        <div class="post-body">
+                            <p>{{ post.body|truncatewords:30 }}</p>
+                            {% if post.body|length > 150 %}
+                                <a href="{% url 'posts:page' post.id %}" class="read-more">Read more...</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="post-footer">
+                        <div class="post-stats">
+                            <div class="likes-container">
+                                <span class="likes-icon">❤️</span>
+                                <span class="likes-count">{{ post.total_likes }}</span>
+                                <span class="likes-label">likes</span>
+                            </div>
+                        </div>
+                        
+                        <div class="post-interactions">
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'posts:like-post' post.id %}" method="POST" class="like-form">
+                                    {% csrf_token %}
+                                    {% if user in post.likes.all %}
+                                        <button type="submit" class="interaction-btn unlike-btn" title="Unlike this post">
+                                            <span class="btn-icon">💔</span>
+                                            <span class="btn-text">Unlike</span>
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="interaction-btn like-btn" title="Like this post">
+                                            <span class="btn-icon">❤️</span>
+                                            <span class="btn-text">Like</span>
+                                        </button>
+                                    {% endif %}
+                                </form>
+                                
+                                <a href="{% url 'posts:page' post.id %}" class="interaction-btn view-btn" title="View full post">
+                                    <span class="btn-icon">👁️</span>
+                                    <span class="btn-text">View</span>
+                                </a>
+                            {% else %}
+                                <a href="{% url 'users:login' %}" class="interaction-btn login-prompt" title="Login to interact">
+                                    <span class="btn-icon">🔐</span>
+                                    <span class="btn-text">Login to interact</span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <h3>No posts yet</h3>
+                <p>Be the first to share something amazing!</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'posts:new-post' %}" class="btn">Create First Post</a>
                 {% else %}
-                    <button type="submit" class="btn">Like</button>
+                    <a href="{% url 'users:register' %}" class="btn">Join SocialHub</a>
                 {% endif %}
-            </form>
-            {% endif %}
-
-        </article>
-    {% endfor %}
-</section>
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

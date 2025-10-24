@@ -6,37 +6,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
         {% block title %}
-            Social Media Web App
+            SocialHub - Modern Social Media
         {% endblock %}
     </title>
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Scripts -->
     <script src="{% static 'js/main.js' %}" defer></script>
+    
+    <!-- Meta tags for better SEO and social sharing -->
+    <meta name="description" content="SocialHub - A modern, dark-themed social media platform">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta property="og:title" content="SocialHub - Modern Social Media">
+    <meta property="og:description" content="Connect, share, and engage in our modern social platform">
+    <meta property="og:type" content="website">
 </head>
 <body>
+    <!-- Navigation -->
     <nav>
-        <a href="/">
-            <span role="img" aria-label="Home" title="Home">🏠</span>
-        </a> | 
-        {% if user.is_authenticated %}
-            <a href="{% url 'posts:new-post' %}">
-                <span role="img" aria-label="New Post" title="New Post">🆕</span>
-            </a> | 
-            <form class="logout" action="{% url 'users:logout' %}" method="post">
-                {% csrf_token %} 
-                <button class="logout-button" aria-label="User Logout" title="User Logout">👋 {{ user.username }}</button>
-            </form>
-        {% else %}
-            <a href="{% url 'users:register' %}">
-                <span role="img" aria-label="User Registration" title="User Registration">📝</span>
-            </a> | 
-            <a href="{% url 'users:login' %}">
-                <span role="img" aria-label="User Login" title="User Login">🔐</span>
+        <div class="nav-brand">
+            <a href="/" class="brand-link">
+                <span class="brand-icon">🌐</span>
+                <span class="brand-text">SocialHub</span>
             </a>
-        {% endif %}
+        </div>
+        
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <a href="{% url 'posts:new-post' %}" class="nav-link">
+                    <span class="nav-icon">✨</span>
+                    <span class="nav-text">New Post</span>
+                </a>
+                <div class="user-menu">
+                    <span class="user-greeting">Welcome, {{ user.username }}!</span>
+                    <form class="logout" action="{% url 'users:logout' %}" method="post">
+                        {% csrf_token %} 
+                        <button class="logout-button" aria-label="User Logout" title="User Logout">
+                            <span class="logout-icon">👋</span>
+                            <span class="logout-text">Logout</span>
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <a href="{% url 'users:register' %}" class="nav-link">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">Register</span>
+                </a>
+                <a href="{% url 'users:login' %}" class="nav-link">
+                    <span class="nav-icon">🔐</span>
+                    <span class="nav-text">Login</span>
+                </a>
+            {% endif %}
+        </div>
     </nav>
+    
+    <!-- Main Content -->
     <main>
         {% block content %}
         {% endblock %}
     </main>
+    
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 SocialHub. Built with ❤️ and modern web technologies.</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy</a>
+                <a href="#" class="footer-link">Terms</a>
+                <a href="#" class="footer-link">Support</a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
 </body>
 </html>
